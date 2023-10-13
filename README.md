@@ -49,13 +49,13 @@ python install-reference-genome.py --reference GRCh37
 ```
 
 ## Running SigProfilerAssignment
-[SigProfiler tools](https://cancer.sanger.ac.uk/signatures/tools/) require passing a folder containing input files, rather than an individual file itself. Additionally, their [expected input for Mutation Annotation Format (MAF) files](https://osf.io/s93d5/wiki/3.%20Using%20the%20Tool%20-%20SBS%2C%20ID%2C%20DBS%20Input/) does not follow either [NCI](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/)) or [TCGA](https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/) MAF specifications. Thus, to use this repository, we recommend,
+[SigProfiler tools](https://cancer.sanger.ac.uk/signatures/tools/) require passing a folder containing input files, rather than an individual file itself. Additionally, their [expected input for Mutation Annotation Format (MAF) files](https://osf.io/s93d5/wiki/3.%20Using%20the%20Tool%20-%20SBS%2C%20ID%2C%20DBS%20Input/) does not follow either [NCI](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) or [TCGA](https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/) MAF specifications. Thus, to use this repository, we recommend,
 1. Placing input files within an input directory
-2. [Trim the MAF files](#trimming-maf-files) using `trim_maf.py`
+2. [Trim the MAF files](#trimming-maf-files) using `trim-maf.py`
 3. [Run SigProfilerAssignment](#running-sigprofilerassignment) using `sigProfilerAssignment.py`
 
 ### Trimming MAF files
-`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. 
+`trim-maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. 
 
 Required arguments:
 ```
@@ -71,7 +71,7 @@ Optional arguments:
 
 Example for file input:
 ```bash
-python trim_maf.py \
+python trim-maf.py \
   --mode file \
   --input example.oncotated.validated.annotated.final.maf \
   --output-folder trimmed-mafs \
@@ -83,7 +83,7 @@ The script `sigProfilerAssignment.py` is a wrapper around SigProfilerAssignment'
 
 Required arguments:
 ```
-    --input-folder, -i          <string>    folder containing input MAF files, after processing with `trim_maf.py`
+    --input-folder, -i          <string>    folder containing input MAF files, after processing with `trim-maf.py`
     --output-folder, -f         <string>    folder to write outputs to
     --write-results-per-sample  <boolean>   if separate output files should be created for each sample
 ```
