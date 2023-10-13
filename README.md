@@ -79,7 +79,9 @@ python trim-maf.py \
 ```
 
 ### Running SigProfilerAssignment
-The script `sigProfilerAssignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files). This wrapper contains three required arguments and then largely mimics SigProfilerAssignment's [additional parameters](https://github.com/AlexandrovLab/SigProfilerAssignment#-main-parameters), with the exception of `--do-not-export-probabilities` and `--disable-plotting` as wrappers around `export_probabilities` and `make_plots`, respectively. The default values for both of these arguments are `True`, so the behavior for this wrapper is to disable them if you do not want the default functionality.
+The script `sigProfilerAssignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files). 
+
+This wrapper contains three required arguments and then largely mimics SigProfilerAssignment's [additional parameters](https://github.com/AlexandrovLab/SigProfilerAssignment#-main-parameters), with the exception of `--do-not-export-probabilities` and `--disable-plotting` as wrappers around `export_probabilities` and `make_plots`, respectively. The default values for both of these arguments are `True`, so the behavior for this wrapper is to disable them if you do not want the default functionality.
 
 Required arguments:
 ```
