@@ -1,7 +1,7 @@
 # SigProfilerAssignment wrapper
 **Please [read their preprint](), review their [GitHub repository](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), [official documentation](https://osf.io/mz79v/wiki/home/), and [COSMIC's mutational signatures page](https://cancer.sanger.ac.uk/signatures/) before using code in this repository**. 
 
-This repository contains an implementation of [SigProfilerAssignment](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), an algorithm that enabling the assignment of previously known mutational signatures to individual samples and individual somatic mutations. As of this writing, SigProfilerAssignment has not yet been published in a peer review journal and the GitHub repository continues to be developed. So, while the [requirements](requirements.txt) file specifies a release, the code in this repository may eventually break as the authors make updates. 
+This repository contains code that is a wrapper around [SigProfilerAssignment](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), an algorithm that enabling the assignment of previously known mutational signatures to individual samples and individual somatic mutations, by the [Alexandrov Lab at UCSD](https://alexandrov.cloud.ucsd.edu/). As of this writing, SigProfilerAssignment has not yet been published in a peer review journal and the GitHub repository continues to be developed. So, while the [requirements](requirements.txt) file specifies a release, the code in this repository may eventually break as the authors make updates. 
 
 SigProfilerAssignment does [not currently work in containers](https://github.com/AlexandrovLab/SigProfilerAssignment/issues/78) :(  
 
@@ -121,3 +121,12 @@ The flow of this script is a bit odd, it performs the following sequence,
 The copying and removing of inputs from the output directory is because the current version of SigProfilerMatrixGenerator writes outputs to the input directory. Thus, this is performed to keep all outputs from SigProfilerAssignment in the outputs folder specified, leaving the inputs folder untouched. This definitely was not the case in prior versions of the tool, but I cannot find the changes in their release notes. Maybe I will open an Issue on their GitHub repository to try to find out if it was an intentional change or not.  
 
 ### Outputs
+There are outputs generated from both SigProfilerMatrixGenerator and SigProfilerAssignment. Detailed descriptions of outputs can be found within the official documentation for [SigProfilerMatrixGenerator](https://osf.io/s93d5/wiki/home/) and [SigProfilerAssignment](https://osf.io/mz79v/wiki/4.%20Using%20the%20Tool%20-%20Output/). 
+
+Outputs found in the `{output-folder}/` are as follows,
+- `Assignment_Solution/`, outputs from SigProfilerAssignment
+- `input/` a copy of the inputs used
+- `Matrix_Generator_output/`, outputs from SigProfilerMatrixGenerator
+- `SBS_sample_contributions/`, SBS contributions by sample, generated if `--write-results-per-sample` is passed
+- `JOB_METADATA_SPA.TXT`, log file from SigProfilerAssignment
+- `SBS_contributions.txt`, calculated contributions per sample for each SBS signature 
