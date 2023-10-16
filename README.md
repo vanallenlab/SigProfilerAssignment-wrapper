@@ -51,11 +51,11 @@ python install-reference-genome.py --reference GRCh37
 ## Running SigProfilerAssignment
 [SigProfiler tools](https://cancer.sanger.ac.uk/signatures/tools/) require passing a folder containing input files, rather than an individual file itself. Additionally, their [expected input for Mutation Annotation Format (MAF) files](https://osf.io/s93d5/wiki/3.%20Using%20the%20Tool%20-%20SBS%2C%20ID%2C%20DBS%20Input/) does not follow either [NCI](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) or [TCGA](https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/) MAF specifications. Thus, to use this repository, we recommend,
 1. Placing input files within an input directory
-2. [Trim the MAF files](#trimming-maf-files) using `trim-maf.py`
-3. [Run SigProfilerAssignment](#running-sigprofilerassignment) using `run-sig-profiler-assignment.py`
+2. [Trim the MAF files](#trimming-maf-files) using `trim_maf.py`
+3. [Run SigProfilerAssignment](#running-sigprofilerassignment) using `sig_profiler_assignment.py`
 
 ### Trimming MAF files
-`trim-maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. 
+`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. 
 
 Required arguments:
 ```
@@ -71,7 +71,7 @@ Optional arguments:
 
 Example for file input:
 ```bash
-python trim-maf.py \
+python trim_maf.py \
   --mode file \
   --input example.oncotated.validated.annotated.final.maf \
   --output-folder trimmed-mafs \
@@ -79,18 +79,18 @@ python trim-maf.py \
 ```
 
 ### Running SigProfilerAssignment
-The script `run-sig-profiler-assignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files). 
+The script `sig_profiler_assignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files). 
 
 This wrapper contains three required arguments and then largely mimics SigProfilerAssignment's [additional parameters](https://github.com/AlexandrovLab/SigProfilerAssignment#-main-parameters), with the exception of `--do-not-export-probabilities` and `--disable-plotting` as wrappers around `export_probabilities` and `make_plots`, respectively. The default values for both of these arguments are `True`, so the behavior for this wrapper is to disable them if you do not want the default functionality.
 
 Required arguments:
 ```
-    --input-folder, -i          <string>    folder containing input MAF files, after processing with `trim-maf.py`
+    --input-folder, -i          <string>    folder containing input MAF files, after processing with `trim_maf.py`
     --output-folder, -f         <string>    folder to write outputs to
     --write-results-per-sample  <boolean>   if separate output files should be created for each sample
 ```
 
-Optional arguments, see [their official documentation]():
+Optional arguments, see [their official documentation](https://osf.io/mz79v/wiki/3.Using%20the%20Tool%20-%20Input/):
 ```
     --input-type
     --context-type
@@ -108,7 +108,7 @@ Optional arguments, see [their official documentation]():
 
 Example:
 ```
-python run-sig-profiler-assignment.py -i trimmed-mafs -o outputs --write-results-per-sample --verbose
+python sig_profiler_assignment.py -i trimmed-mafs -o outputs --write-results-per-sample --verbose
 ```
 
 The flow of this script is a bit odd, it performs the following sequence,
