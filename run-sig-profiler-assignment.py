@@ -26,13 +26,20 @@ def read_dataframe(file):
     return pandas.read_csv(file, sep='\t')
 
 
-def remove_inputs(output_folder):
-    command = f"rm {output_folder}/*.maf"
+def remove_inputs(folder):
+    command = f"rm {folder}/*.maf"
     subprocess.call(command, shell=True)
 
 
-def rename_matrix_generator_output_folder(output_folder):
-    command = f"mv {output_folder}/output {output_folder}/Matrix_Generator_output"
+def remove_trailing_forward_slash(folder):
+    return folder.strip('/') if folder[-1] == '/' else folder
+
+
+def rename_matrix_generator_output_folder(folder):
+    command = f"mv {folder}/output {folder}/Matrix_Generator_output"
+    subprocess.call(command, shell=True)
+
+    command = f"mv {folder}/logs {folder}/Matrix_Generator_output/logs"
     subprocess.call(command, shell=True)
 
 
@@ -52,8 +59,6 @@ def run_assignment(
     sample_reconstruction_plots=None,
     verbose=False
 ):
-    input_folder = f"{input_folder}/" if input_folder[-1] != "/" else input_folder
-    output_folder = f"{output_folder}/" if output_folder[-1] != "/" else output_folder
 
     Analyze.cosmic_fit(
         samples=input_folder,
@@ -165,6 +170,10 @@ if __name__ == "__main__":
     )
     # add argument to split up outputs by sample
     args = parser.parse_args()
+
+    args.input_folder = remove_trailing_forward_slash(args.input_folder)
+    args.output_folder = remove_trailing_forward_slash(args.output_folder)
+    print(args.input_folder, args.output_folder)
 
     subprocess.call(f"mkdir -p {args.output_folder}", shell=True)
     # There is a bug(?) with SigProfilerAnalyzer 0.0.32 and/or SigProfilerMatrixGenerator v.1.2.18
