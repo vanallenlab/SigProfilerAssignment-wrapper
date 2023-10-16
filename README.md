@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ```
 
 ### Install reference genome
-SigProfilerAssignment uses [SigProfilerMatrixGenerator](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator) for matrix generation, which requires a reference genome to be installed in the virtual environment. The script `install-reference-genome.py` will install a reference genome for use. 
+SigProfilerAssignment uses [SigProfilerMatrixGenerator](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator) for matrix generation, which requires a reference genome to be installed in the virtual environment. The script `install_reference_genome.py` will install a reference genome for use. 
 
 This script uses SigProfilerMatrixGenerator and it will produce a warning that this step takes 40+ minutes, but it has never taken more than 5-10 minutes using either my home or Dana-Farber internet. 
 
@@ -45,7 +45,7 @@ Required arguments:
 
 Example:
 ```bash
-python install-reference-genome.py --reference GRCh37
+python install_reference_genome.py --reference GRCh37
 ```
 
 ## Running SigProfilerAssignment
