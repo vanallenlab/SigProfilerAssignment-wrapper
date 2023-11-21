@@ -79,7 +79,7 @@ def run_assignment(
 
 
 def write_dataframe(file, output_name):
-    file.to_csv(output_name, sep='\t')
+    file.to_csv(output_name, sep='\t', index=False)
 
 
 if __name__ == "__main__":
