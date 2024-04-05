@@ -86,7 +86,7 @@ This wrapper contains three required arguments and then largely mimics SigProfil
 Required arguments:
 ```
     --input-folder, -i          <string>    folder containing input MAF files, after processing with `trim_maf.py`
-    --output-folder, -f         <string>    folder to write outputs to
+    --output-folder, -o         <string>    folder to write outputs to
     --write-results-per-sample  <boolean>   if separate output files should be created for each sample
 ```
 
