@@ -21,15 +21,15 @@ This repository uses Python 3.11. We recommend using a [virtual environment](htt
 
 To create a virtual environment and install dependencies with Anaconda or Miniconda, run the following from this repository's directory:
 ```bash
-conda create -y -n SigProfilerAnalyzer python=3.11
-conda activate SigProfilerAnalyzer
+conda create -y -n SigProfilerAssignment python=3.11
+conda activate SigProfilerAssignment
 pip install -r requirements.txt
 ```
 
 If you are using base Python, you can create a virtual environment and install dependencies by running:
 ```bash
-virtualenv venv_SigProfilerAnalyzer
-source activate venv_SigProfilerAnalyzer/bin/activate
+virtualenv venv_SigProfilerAssignment
+source activate venv_SigProfilerAssignment/bin/activate
 pip install -r requirements.txt
 ```
 
