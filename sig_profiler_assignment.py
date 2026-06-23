@@ -3,9 +3,18 @@ import glob
 import os
 import pandas
 import shutil
-import subprocess
 
 from SigProfilerAssignment import Analyzer as Analyze
+
+
+def annotate_aetiology(dataframe: pandas.DataFrame, aetiologies: pandas.DataFrame):
+    signature_col = dataframe.columns[0]
+    merged = dataframe.merge(
+        aetiologies.rename(columns={'id': signature_col}),
+        on=signature_col,
+        how='left'
+    )
+    return merged
 
 
 def calculate_contributions(samples_stats, activities):
@@ -31,8 +40,8 @@ def read_dataframe(file):
 
 
 def remove_inputs(folder):
-    command = f"rm {folder}/*.maf"
-    subprocess.call(command, shell=True)
+    for file in glob.glob(os.path.join(folder, "*.maf")):
+        os.remove(file)
 
 
 def remove_trailing_forward_slash(folder):
@@ -40,11 +49,14 @@ def remove_trailing_forward_slash(folder):
 
 
 def rename_matrix_generator_output_folder(folder):
-    command = f"mv {folder}/output {folder}/Matrix_Generator_output"
-    subprocess.call(command, shell=True)
-
-    command = f"mv {folder}/logs {folder}/Matrix_Generator_output/logs"
-    subprocess.call(command, shell=True)
+    os.rename(
+        os.path.join(folder, "output"), 
+        os.path.join(folder, "Matrix_Generator_output")
+    )
+    os.rename(
+        os.path.join(folder, "logs"), 
+        os.path.join(folder, "Matrix_Generator_output", "logs")
+    )
 
 
 def run_assignment(
@@ -221,13 +233,15 @@ if __name__ == "__main__":
     write_dataframe(signature_contributions, f'{args.output_folder}/SBS_contributions.txt')
     
     if args.aetiology:
-        
+        aetiologies = read_dataframe(file=args.aetiology)
+    else:
+        aetiologies = pandas.DataFrame(columns=['id', 'aetiology'])
 
     if args.write_results_per_sample:
         os.makedirs(os.path.join(args.output_folder, "SBS_sample_contributions"), exist_ok=True)
         for sample in signature_contributions.index:
             sample_output = signature_contributions.loc[sample, :].to_frame().reset_index()
-            sample_output = annotate_aetiology(dataframe=sample_output, aetiologies=args.aetiology)
+            sample_output = annotate_aetiology(dataframe=sample_output, aetiologies=aetiologies)
             sample_output.columns = ['signature', 'contribution', 'aetiology']
             sample_output_name = f"{args.output_folder}/SBS_sample_contributions/{sample}.SBS_contributions.txt"
             write_dataframe(sample_output, output_name=sample_output_name)
