@@ -67,7 +67,7 @@ python install_reference_genome.py --reference GRCh37
 
 ### Trimming MAF files
 
-`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator.
+`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. See [example_data/raw/example.maf](./example_data/raw/example.maf) for an example input file.
 
 Required arguments:
 
@@ -88,12 +88,12 @@ Example for file input:
 ```bash
 python trim_maf.py \
   --mode file \
-  --input example.oncotated.validated.annotated.final.maf \
-  --output-folder trimmed-mafs \
+  --input example_data/raw/example.maf \
+  --output-folder example_data/trimmed \
   --output-suffix "maf"
 ```
 
-### Running SigProfilerAssignment
+### Running
 
 The script `sig_profiler_assignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files).
 
@@ -126,8 +126,12 @@ Optional arguments, see [their official documentation](https://osf.io/mz79v/wiki
 
 Example:
 
-```text
-python sig_profiler_assignment.py -i trimmed-mafs -o outputs --write-results-per-sample --verbose
+```bash
+python sig_profiler_assignment.py \
+    -i example_data/trimmed/ \
+    -o example_data/outputs/ \
+    --write-results-per-sample \
+    --verbose
 ```
 
 The flow of this script is a bit odd, it performs the following sequence:
@@ -140,7 +144,7 @@ The flow of this script is a bit odd, it performs the following sequence:
 
 The copying and removing of inputs from the output directory is because the current version of SigProfilerMatrixGenerator writes outputs to the input directory. Thus, this is performed to keep all outputs from SigProfilerAssignment in the outputs folder specified, leaving the inputs folder untouched. This definitely was not the case in prior versions of the tool, but I cannot find the changes in their release notes. Maybe I will open an Issue on their GitHub repository to try to find out if it was an intentional change or not.  
 
-#### Outputs
+### Outputs
 
 There are outputs generated from both SigProfilerMatrixGenerator and SigProfilerAssignment. Detailed descriptions of outputs can be found within the official documentation for [SigProfilerMatrixGenerator](https://osf.io/s93d5/wiki/home/) and [SigProfilerAssignment](https://osf.io/mz79v/wiki/4.%20Using%20the%20Tool%20-%20Output/).
 
@@ -153,9 +157,9 @@ Outputs found in the `{output-folder}/` are as follows:
 - `JOB_METADATA_SPA.TXT`, log file from SigProfilerAssignment
 - `SBS_contributions.txt`, calculated contributions per sample for each SBS signature
 
-### Annotating aetiologies
+## Annotating aetiologies
 
-After running SigProfilerAssignment, `annotate_aetiology.py` can be used to append mutational signature aetiology annotations to SBS contribution files. It accepts either a single contributions file or a folder of contributions files (matching `*.SBS_contributions.txt`), and left-joins aetiology data onto them by signature ID.
+After running SigProfilerAssignment, `annotate_aetiology.py` can be used to append mutational signature aetiology annotations to SBS contribution files. It accepts either a single contributions file or a folder of contributions files (matching `*.SBS_contributions.txt`), and left-joins aetiology data onto them by signature ID. See [signature_aetiologies.example.tsv](./example_data/signature_aetiologies.examples.tsv) for an example datasource.
 
 Required arguments:
 
@@ -174,16 +178,16 @@ Example for a single file:
 
 ```bash
 python annotate_aetiology.py \
-  --input outputs/SBS_contributions.txt \
-  --aetiologies signature_aetiologies.tsv \
-  --output outputs/SBS_contributions.annotated.txt
+  --input example_data/outputs/SBS_contributions/example_tumor_profile.SBS_contributions.txt \
+  --aetiologies example_data/signature_aetiologies.examples.tsv \
+  --output example_data/annotated/example_tumor_profile.SBS_contributions.txt
 ```
 
 Example for a folder:
 
 ```bash
 python annotate_aetiology.py \
-  --input outputs/SBS_sample_contributions \
-  --aetiologies signature_aetiologies.tsv \
-  --output outputs/SBS_sample_contributions_annotated/
+  --input example_data/outputs/SBS_sample_contributions \
+  --aetiologies example_data/signature_aetiologies.tsv \
+  --output example_data/annotated/
 ```
