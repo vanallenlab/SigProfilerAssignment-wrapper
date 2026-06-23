@@ -1,18 +1,18 @@
 # SigProfilerAssignment wrapper
 
-**Please [read their manuscript](https://academic.oup.com/bioinformatics/article/39/12/btad756/7473371), review their [GitHub repository](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), [official documentation](https://osf.io/mz79v/wiki/home/), and [COSMIC's mutational signatures page](https://cancer.sanger.ac.uk/signatures/) before using code in this repository**. 
+**Please [read their manuscript](https://academic.oup.com/bioinformatics/article/39/12/btad756/7473371), review their [GitHub repository](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), [official documentation](https://osf.io/mz79v/wiki/home/), and [COSMIC's mutational signatures page](https://cancer.sanger.ac.uk/signatures/) before using code in this repository**.
 
-This repository contains code that is a wrapper around [SigProfilerAssignment](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), an algorithm that enabling the assignment of previously known mutational signatures to individual samples and individual somatic mutations, by the [Alexandrov Lab at UCSD](https://alexandrov.cloud.ucsd.edu/). As of this writing, SigProfilerAssignment has not yet been published in a peer review journal and the GitHub repository continues to be developed. So, while the [requirements](requirements.txt) file specifies a release, the code in this repository may eventually break as the authors make updates. 
+This repository contains code that is a wrapper around [SigProfilerAssignment](https://github.com/AlexandrovLab/SigProfilerAssignment/tree/main), an algorithm that enabling the assignment of previously known mutational signatures to individual samples and individual somatic mutations, by the [Alexandrov Lab at UCSD](https://alexandrov.cloud.ucsd.edu/). As of this writing, SigProfilerAssignment has not yet been published in a peer review journal and the GitHub repository continues to be developed. So, while the [requirements](requirements.txt) file specifies a release, the code in this repository may eventually break as the authors make updates.
 
 SigProfilerAssignment does [not currently work in containers](https://github.com/AlexandrovLab/SigProfilerAssignment/issues/78) :(  
 
 ## Installation and set up
 
-This repository uses **Python 3.11**. To use code in this repository, [download this software from GitHub](#download-this-software-from-github), [install Python dependencies](#install-python-dependencies) within a virtual environment, and [install a reference genome](#install-reference-genome). 
+This repository uses **Python 3.11**. To use code in this repository, [download this software from GitHub](#download-this-software-from-github), [install Python dependencies](#install-python-dependencies) within a virtual environment, and [install a reference genome](#install-reference-genome).
 
 ### Download this software from GitHub
 
-This repository can be downloaded through GitHub on the website or by using terminal. To download on the website, navigate to the top of this page, click the green `Clone or download` button, and select `Download ZIP`. This will download this repository in a compressed format. To install using GitHub on terminal, type 
+This repository can be downloaded through GitHub on the website or by using terminal. To download on the website, navigate to the top of this page, click the green `Clone or download` button, and select `Download ZIP`. This will download this repository in a compressed format. To install using GitHub on terminal, type
 
 ```bash
 git clone https://github.com/vanallenlab/SigProfilerAssignment.git
@@ -21,7 +21,7 @@ cd SigProfilerAssignment
 
 ### Install Python dependencies
 
-This repository uses Python 3.11. We recommend using a [virtual environment](https://docs.python.org/3/tutorial/venv.html) and running Python with either [Anaconda](https://www.anaconda.com/download/) or  [Miniconda](https://conda.io/miniconda.html). 
+This repository uses Python 3.11. We recommend using a [virtual environment](https://docs.python.org/3/tutorial/venv.html) and running Python with either [Anaconda](https://www.anaconda.com/download/) or  [Miniconda](https://conda.io/miniconda.html).
 
 To create a virtual environment and install dependencies with Anaconda or Miniconda, run the following from this repository's directory:
 
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 ### Install reference genome
 
-SigProfilerAssignment uses [SigProfilerMatrixGenerator](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator) for matrix generation, which requires a reference genome to be installed in the virtual environment. The script `install_reference_genome.py` will install a reference genome for use. 
+SigProfilerAssignment uses [SigProfilerMatrixGenerator](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator) for matrix generation, which requires a reference genome to be installed in the virtual environment. The script `install_reference_genome.py` will install a reference genome for use.
 
 This script uses SigProfilerMatrixGenerator and it will produce a warning that this step takes 40+ minutes, but it has never taken more than 5-10 minutes using either my home or Dana-Farber internet.
 
@@ -67,7 +67,7 @@ python install_reference_genome.py --reference GRCh37
 
 ### Trimming MAF files
 
-`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator. 
+`trim_maf.py` will trim either a single MAF file or folder containing MAF files to the specification set by SigProfilerMatrixGenerator.
 
 Required arguments:
 
@@ -95,7 +95,7 @@ python trim_maf.py \
 
 ### Running SigProfilerAssignment
 
-The script `sig_profiler_assignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files). 
+The script `sig_profiler_assignment.py` is a wrapper around SigProfilerAssignment's `cosmic_fit` function. Additionally, the script will compute the contribution (or weight) per SBS signature per sample. Input MAFs should be [trimmed and formatted beforehand](#trimming-maf-files).
 
 This wrapper contains three required arguments and then largely mimics SigProfilerAssignment's [additional parameters](https://github.com/AlexandrovLab/SigProfilerAssignment#-main-parameters), with the exception of `--do-not-export-probabilities` and `--disable-plotting` as wrappers around `export_probabilities` and `make_plots`, respectively. The default values for both of these arguments are `True`, so the behavior for this wrapper is to disable them if you do not want the default functionality.
 
@@ -140,9 +140,9 @@ The flow of this script is a bit odd, it performs the following sequence:
 
 The copying and removing of inputs from the output directory is because the current version of SigProfilerMatrixGenerator writes outputs to the input directory. Thus, this is performed to keep all outputs from SigProfilerAssignment in the outputs folder specified, leaving the inputs folder untouched. This definitely was not the case in prior versions of the tool, but I cannot find the changes in their release notes. Maybe I will open an Issue on their GitHub repository to try to find out if it was an intentional change or not.  
 
-### Outputs
+#### Outputs
 
-There are outputs generated from both SigProfilerMatrixGenerator and SigProfilerAssignment. Detailed descriptions of outputs can be found within the official documentation for [SigProfilerMatrixGenerator](https://osf.io/s93d5/wiki/home/) and [SigProfilerAssignment](https://osf.io/mz79v/wiki/4.%20Using%20the%20Tool%20-%20Output/). 
+There are outputs generated from both SigProfilerMatrixGenerator and SigProfilerAssignment. Detailed descriptions of outputs can be found within the official documentation for [SigProfilerMatrixGenerator](https://osf.io/s93d5/wiki/home/) and [SigProfilerAssignment](https://osf.io/mz79v/wiki/4.%20Using%20the%20Tool%20-%20Output/).
 
 Outputs found in the `{output-folder}/` are as follows:
 
@@ -152,3 +152,38 @@ Outputs found in the `{output-folder}/` are as follows:
 - `SBS_sample_contributions/`, SBS contributions by sample, generated if `--write-results-per-sample` is passed
 - `JOB_METADATA_SPA.TXT`, log file from SigProfilerAssignment
 - `SBS_contributions.txt`, calculated contributions per sample for each SBS signature
+
+### Annotating aetiologies
+
+After running SigProfilerAssignment, `annotate_aetiology.py` can be used to append mutational signature aetiology annotations to SBS contribution files. It accepts either a single contributions file or a folder of contributions files (matching `*.SBS_contributions.txt`), and left-joins aetiology data onto them by signature ID.
+
+Required arguments:
+
+```text
+    --input, -i         <string>    path to a single SBS contributions file or a folder of SBS contributions files
+    --aetiologies, -a   <string>    tab-delimited file with signature aetiologies; must have an "id" column matching signature identifiers
+```
+
+Optional arguments:
+
+```text
+    --output, -o        <string>    output file (when --input is a file) or output folder (when --input is a folder); defaults to overwriting the input file(s) in place
+```
+
+Example for a single file:
+
+```bash
+python annotate_aetiology.py \
+  --input outputs/SBS_contributions.txt \
+  --aetiologies signature_aetiologies.tsv \
+  --output outputs/SBS_contributions.annotated.txt
+```
+
+Example for a folder:
+
+```bash
+python annotate_aetiology.py \
+  --input outputs/SBS_sample_contributions \
+  --aetiologies signature_aetiologies.tsv \
+  --output outputs/SBS_sample_contributions_annotated/
+```

@@ -88,14 +88,16 @@ def rename_matrix_generator_output_folder(folder: str):
     Args:
         folder (str): Path to the root output directory containing the 'output' and 'logs' subdirectories.
     """
-    os.rename(
-        os.path.join(folder, "output"), 
-        os.path.join(folder, "Matrix_Generator_output")
-    )
-    os.rename(
-        os.path.join(folder, "logs"), 
-        os.path.join(folder, "Matrix_Generator_output", "logs")
-    )
+    if os.path.exists(os.path.join(folder, "output")):
+        os.rename(
+            os.path.join(folder, "output"),
+            os.path.join(folder, "Matrix_Generator_output")
+        )
+    if os.path.exists(os.path.join(folder, "logs")):
+        os.rename(
+            os.path.join(folder, "logs"),
+            os.path.join(folder, "Matrix_Generator_output", "logs")
+        )
 
 
 def run_assignment(
