@@ -1,6 +1,8 @@
 import argparse
+import glob
 import os
 import pandas
+import shutil
 import subprocess
 
 from SigProfilerAssignment import Analyzer as Analyze
@@ -20,8 +22,8 @@ def calculate_contributions(samples_stats, activities):
 
 
 def copy_inputs(input_folder, output_folder):
-    command = f"cp {input_folder}/*.maf {output_folder}/"
-    subprocess.call(command, shell=True)
+    for file in glob.glob(os.path.join(input_folder, "*.maf")):
+        shutil.copy2(file, output_folder)
 
 
 def read_dataframe(file):
