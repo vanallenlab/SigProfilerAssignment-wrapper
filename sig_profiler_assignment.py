@@ -1,6 +1,8 @@
 import argparse
-import subprocess
+import os
 import pandas
+import subprocess
+
 from SigProfilerAssignment import Analyzer as Analyze
 
 
@@ -168,6 +170,13 @@ if __name__ == "__main__":
         action='store_true',
         help='equivalent to `verbose` parameter'
     )
+    parser.add_argument(
+        '--aetiology',
+        '-a',
+        required=False,
+        help='tab delimited text file of mutational signatures and their aetiology'
+    )
+
     # add argument to split up outputs by sample
     args = parser.parse_args()
 
@@ -175,7 +184,7 @@ if __name__ == "__main__":
     args.output_folder = remove_trailing_forward_slash(args.output_folder)
     print(args.input_folder, args.output_folder)
 
-    subprocess.call(f"mkdir -p {args.output_folder}", shell=True)
+    os.makedirs(args.output_folder, exist_ok=True)
     # There is a bug(?) with SigProfilerAnalyzer 0.0.32 and/or SigProfilerMatrixGenerator v.1.2.18
     # where some outputs are placed in the input folder. This was not the case previously
     # but I cannot find documentation in their release notes. Maybe I was doing something wrong! So, hence this dance
@@ -208,12 +217,16 @@ if __name__ == "__main__":
 
     signature_contributions = calculate_contributions(solution_samples_stats, solution_activities)
     write_dataframe(signature_contributions, f'{args.output_folder}/SBS_contributions.txt')
+    
+    if args.aetiology:
+        
 
     if args.write_results_per_sample:
-        subprocess.call(f"mkdir -p {args.output_folder}/SBS_sample_contributions/", shell=True)
+        os.makedirs(os.path.join(args.output_folder, "SBS_sample_contributions"), exist_ok=True)
         for sample in signature_contributions.index:
             sample_output = signature_contributions.loc[sample, :].to_frame().reset_index()
-            sample_output.columns = ['signature', 'contribution']
+            sample_output = annotate_aetiology(dataframe=sample_output, aetiologies=args.aetiology)
+            sample_output.columns = ['signature', 'contribution', 'aetiology']
             sample_output_name = f"{args.output_folder}/SBS_sample_contributions/{sample}.SBS_contributions.txt"
             write_dataframe(sample_output, output_name=sample_output_name)
 
