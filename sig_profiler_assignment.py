@@ -3,11 +3,22 @@ import glob
 import os
 import pandas
 import shutil
+from typing import Optional
 
 from SigProfilerAssignment import Analyzer as Analyze
 
 
 def annotate_aetiology(dataframe: pandas.DataFrame, aetiologies: pandas.DataFrame):
+    """
+    Left-joins aetiology annotations onto a signature dataframe by signature ID.
+
+    Args:
+        dataframe (pandas.DataFrame): Signature data where the first column contains signature identifiers.
+        aetiologies (pandas.DataFrame): Aetiology table with an 'id' column matching the signature identifiers.
+
+    Returns:
+        pandas.DataFrame: The input dataframe with aetiology columns appended.
+    """
     signature_col = dataframe.columns[0]
     merged = dataframe.merge(
         aetiologies.rename(columns={'id': signature_col}),
@@ -17,7 +28,17 @@ def annotate_aetiology(dataframe: pandas.DataFrame, aetiologies: pandas.DataFram
     return merged
 
 
-def calculate_contributions(samples_stats, activities):
+def calculate_contributions(samples_stats: pandas.DataFrame, activities: pandas.DataFrame):
+    """
+    Divides each sample's signature activities by its total mutation count to produce fractional contributions.
+
+    Args:
+        samples_stats (pandas.DataFrame): Sample-level stats with 'Sample Names' and 'Total Mutations' columns.
+        activities (pandas.DataFrame): Signature activity counts with a 'Samples' column and one column per signature.
+
+    Returns:
+        pandas.DataFrame: Fractional signature contributions indexed by sample name.
+    """
     return (
         activities
         .set_index('Samples')
@@ -30,25 +51,63 @@ def calculate_contributions(samples_stats, activities):
     )
 
 
-def copy_inputs(input_folder, output_folder):
+def copy_inputs(input_folder: str, output_folder: str):
+    """
+    Copies all MAF files from the input folder into the output folder.
+
+    Args:
+        input_folder (str): Path to the directory containing source MAF files.
+        output_folder (str): Path to the destination directory.
+    """
     for file in glob.glob(os.path.join(input_folder, "*.maf")):
         shutil.copy2(file, output_folder)
 
 
-def read_dataframe(file):
+def read_dataframe(file: str):
+    """
+    Reads a tab-delimited file into a DataFrame.
+
+    Args:
+        file (str): Path to the tab-delimited text file.
+
+    Returns:
+        pandas.DataFrame: Contents of the file.
+    """
     return pandas.read_csv(file, sep='\t')
 
 
-def remove_inputs(folder):
+def remove_inputs(folder: str):
+    """
+    Deletes all MAF files in the given folder.
+
+    Args:
+        folder (str): Path to the directory from which MAF files will be removed.
+    """
     for file in glob.glob(os.path.join(folder, "*.maf")):
         os.remove(file)
 
 
-def remove_trailing_forward_slash(folder):
+def remove_trailing_forward_slash(folder: str):
+    """
+    Strips trailing forward slashes from a folder path.
+
+    Args:
+        folder (str): A directory path string.
+
+    Returns:
+        str: The path with any trailing '/' characters removed.
+    """
     return folder.strip('/') if folder[-1] == '/' else folder
 
 
-def rename_matrix_generator_output_folder(folder):
+def rename_matrix_generator_output_folder(folder: str):
+    """
+    Reorganizes SigProfilerMatrixGenerator output directories under a single named subdirectory.
+    Moves 'output/' to 'Matrix_Generator_output/' and relocates 'logs/' inside it.
+
+    Args:
+        folder (str): Path to the root output directory containing the 'output' and 'logs' subdirectories.
+    """
     os.rename(
         os.path.join(folder, "output"), 
         os.path.join(folder, "Matrix_Generator_output")
@@ -60,22 +119,40 @@ def rename_matrix_generator_output_folder(folder):
 
 
 def run_assignment(
-    input_folder,
-    output_folder,
-    input_type="vcf",
-    context_type="96",
-    version=3.3,
-    exome=False,
-    genome_build='GRCh37',
-    signature_database=None,
-    exclude_signature_subgroups=None,
-    export_probabilities=True,
-    export_probabilities_per_mutation=False,
-    make_plots=True,
-    sample_reconstruction_plots=None,
-    verbose=False
+    input_folder: str,
+    output_folder: str,
+    input_type: str = "vcf",
+    context_type: str = "96",
+    version: float = 3.3,
+    exome: bool = False,
+    genome_build: str = 'GRCh37',
+    signature_database: Optional[str] = None,
+    exclude_signature_subgroups: Optional[str] = None,
+    export_probabilities: bool = True,
+    export_probabilities_per_mutation: bool = False,
+    make_plots: bool = True,
+    sample_reconstruction_plots: Optional[str] = None,
+    verbose: bool = False
 ):
+    """
+    Runs SigProfilerAssignment's cosmic_fit to assign COSMIC mutational signatures to samples.
 
+    Args:
+        input_folder (str): Path to the directory containing input sample files.
+        output_folder (str): Path to the directory where results will be written.
+        input_type (str): Format of input files — 'vcf', 'seg:TYPE', or 'matrix' (default: 'vcf').
+        context_type (str): Mutational context to analyze — '96', '288', '1536', 'DINUC', or 'ID' (default: '96').
+        version (float): COSMIC signature version to use (default: 3.3).
+        exome (bool): If True, restrict analysis to exonic regions (default: False).
+        genome_build (str): Reference genome build — 'GRCh37', 'GRCh38', 'mm9', 'mm10', or 'rn6' (default: 'GRCh37').
+        signature_database (str or None): Path to a custom signature database file (default: None).
+        exclude_signature_subgroups (str or None): Comma-separated signature subgroups to exclude (default: None).
+        export_probabilities (bool): If True, export per-sample signature probabilities (default: True).
+        export_probabilities_per_mutation (bool): If True, export per-mutation probabilities; only applies to 'vcf' input (default: False).
+        make_plots (bool): If True, generate output plots (default: True).
+        sample_reconstruction_plots (str or None): Format for reconstruction plots — 'pdf', 'png', 'both', or None (default: None).
+        verbose (bool): If True, print verbose output (default: False).
+    """
     Analyze.cosmic_fit(
         samples=input_folder,
         output=output_folder,
@@ -94,7 +171,14 @@ def run_assignment(
     )
 
 
-def write_dataframe(file, output_name):
+def write_dataframe(file: pandas.DataFrame, output_name: str):
+    """
+    Writes a DataFrame to a tab-delimited file without the row index.
+
+    Args:
+        file (pandas.DataFrame): The DataFrame to write.
+        output_name (str): Destination file path.
+    """
     file.to_csv(output_name, sep='\t', index=False)
 
 
