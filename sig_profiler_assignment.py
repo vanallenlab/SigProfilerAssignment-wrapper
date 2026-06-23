@@ -3,29 +3,9 @@ import glob
 import os
 import pandas
 import shutil
-from typing import Optional
+import typing
 
 from SigProfilerAssignment import Analyzer as Analyze
-
-
-def annotate_aetiology(dataframe: pandas.DataFrame, aetiologies: pandas.DataFrame):
-    """
-    Left-joins aetiology annotations onto a signature dataframe by signature ID.
-
-    Args:
-        dataframe (pandas.DataFrame): Signature data where the first column contains signature identifiers.
-        aetiologies (pandas.DataFrame): Aetiology table with an 'id' column matching the signature identifiers.
-
-    Returns:
-        pandas.DataFrame: The input dataframe with aetiology columns appended.
-    """
-    signature_col = dataframe.columns[0]
-    merged = dataframe.merge(
-        aetiologies.rename(columns={'id': signature_col}),
-        on=signature_col,
-        how='left'
-    )
-    return merged
 
 
 def calculate_contributions(samples_stats: pandas.DataFrame, activities: pandas.DataFrame):
@@ -126,12 +106,12 @@ def run_assignment(
     version: float = 3.3,
     exome: bool = False,
     genome_build: str = 'GRCh37',
-    signature_database: Optional[str] = None,
-    exclude_signature_subgroups: Optional[str] = None,
+    signature_database: typing.Optional[str] = None,
+    exclude_signature_subgroups: typing.Optional[str] = None,
     export_probabilities: bool = True,
     export_probabilities_per_mutation: bool = False,
     make_plots: bool = True,
-    sample_reconstruction_plots: Optional[str] = None,
+    sample_reconstruction_plots: typing.Optional[str] = None,
     verbose: bool = False
 ):
     """
@@ -268,12 +248,6 @@ if __name__ == "__main__":
         action='store_true',
         help='equivalent to `verbose` parameter'
     )
-    parser.add_argument(
-        '--aetiology',
-        '-a',
-        required=False,
-        help='tab delimited text file of mutational signatures and their aetiology'
-    )
 
     # add argument to split up outputs by sample
     args = parser.parse_args()
@@ -315,18 +289,12 @@ if __name__ == "__main__":
 
     signature_contributions = calculate_contributions(solution_samples_stats, solution_activities)
     write_dataframe(signature_contributions, f'{args.output_folder}/SBS_contributions.txt')
-    
-    if args.aetiology:
-        aetiologies = read_dataframe(file=args.aetiology)
-    else:
-        aetiologies = pandas.DataFrame(columns=['id', 'aetiology'])
 
     if args.write_results_per_sample:
         os.makedirs(os.path.join(args.output_folder, "SBS_sample_contributions"), exist_ok=True)
         for sample in signature_contributions.index:
             sample_output = signature_contributions.loc[sample, :].to_frame().reset_index()
-            sample_output = annotate_aetiology(dataframe=sample_output, aetiologies=aetiologies)
-            sample_output.columns = ['signature', 'contribution', 'aetiology']
+            sample_output.columns = ['signature', 'contribution']
             sample_output_name = f"{args.output_folder}/SBS_sample_contributions/{sample}.SBS_contributions.txt"
             write_dataframe(sample_output, output_name=sample_output_name)
 
