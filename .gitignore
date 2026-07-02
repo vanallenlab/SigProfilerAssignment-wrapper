@@ -1,0 +1,4 @@
+*.DS_Store
+
+# Example input and output/
+example_data/*

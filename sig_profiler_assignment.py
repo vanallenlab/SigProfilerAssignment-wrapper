@@ -283,21 +283,48 @@ if __name__ == "__main__":
     )
     remove_inputs(args.output_folder)
 
-    solution_samples_stats_file = "Assignment_Solution/Solution_Stats/Assignment_Solution_Samples_Stats.txt"
-    solution_samples_stats = read_dataframe(f"{args.output_folder}/{solution_samples_stats_file}")
+    solution_samples_stats_file = os.path.join(
+        args.output_folder,
+        "Assignment_Solution",
+        "Solution_Stats",
+        "Assignment_Solution_Samples_Stats.txt"
+    )
+    solution_samples_stats = read_dataframe(solution_samples_stats_file)
 
-    solution_activities_file = "Assignment_Solution/Activities/Assignment_Solution_Activities.txt"
-    solution_activities = read_dataframe(f"{args.output_folder}/{solution_activities_file}")
+    solution_activities_file = os.path.join(
+        args.output_folder,
+        "Assignment_Solution",
+        "Activities",
+        "Assignment_Solution_Activities.txt"
+    )
+    solution_activities = read_dataframe(solution_activities_file)
 
     signature_contributions = calculate_contributions(solution_samples_stats, solution_activities)
-    write_dataframe(signature_contributions, f'{args.output_folder}/SBS_contributions.txt')
+    write_dataframe(
+        signature_contributions, 
+        os.path.join(
+            args.output_folder,
+            "SBS_contributions.txt",
+        ),
+    )
 
     if args.write_results_per_sample:
         os.makedirs(os.path.join(args.output_folder, "SBS_sample_contributions"), exist_ok=True)
         for sample in signature_contributions.index:
-            sample_output = signature_contributions.loc[sample, :].to_frame().reset_index()
+            sample_output = (
+                signature_contributions
+                .loc[sample, :]
+                .to_frame()
+                .reset_index()
+            )
             sample_output.columns = ['signature', 'contribution']
-            sample_output_name = f"{args.output_folder}/SBS_sample_contributions/{sample}.SBS_contributions.txt"
-            write_dataframe(sample_output, output_name=sample_output_name)
+            write_dataframe(
+                sample_output, 
+                output_name=os.path.join(
+                    args.output_folder,
+                    "SBS_sample_contributions",
+                    f"{sample}.SBS_contributions.txt",
+                )
+            )
 
     rename_matrix_generator_output_folder(args.output_folder)
